@@ -6,6 +6,7 @@ import type { Iimage } from "../models/product.model.js";
 import mongoose from "mongoose";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import ApiResponse from "../utils/apiResponse.js";
 
 /**
  @route       POST /api/products
@@ -50,7 +51,7 @@ export const createProduct: RequestHandler = asyncHandler(
     const failedCount = results.filter((r) => r.status === "rejected").length;
 
     if (uploaded.length === 0) {
-      return res.status(500).json({ message: "all images upload failed" });
+      return res.status(500).json(new ApiResponse("all images upload failed"));
     }
 
     const product = await productModel.create({
@@ -61,11 +62,14 @@ export const createProduct: RequestHandler = asyncHandler(
       images: uploaded,
     });
 
-    return res.status(201).json({
-      success: true,
-      message: `Product created with ${uploaded.length} image(s)${failedCount ? `, ${failedCount} failed` : ""}`,
-      product,
-    });
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(
+          `Product created with ${uploaded.length} image(s)${failedCount ? `, ${failedCount} failed` : ""}`,
+          product,
+        ),
+      );
   },
 );
 
@@ -94,10 +98,9 @@ export const getAllProducts: RequestHandler = asyncHandler(
       throw new ApiError(404, "No products found");
     }
 
-    return res.status(200).json({
-      message: "all products fetched successfully",
-      allProducts,
-    });
+    return res
+      .status(200)
+      .json(new ApiResponse("all products fetched successfully", allProducts));
   },
 );
 
@@ -126,10 +129,9 @@ export const getProductById: RequestHandler = asyncHandler(
       throw new ApiError(404, "No product with this ID");
     }
 
-    return res.status(200).json({
-      message: "product is fetched successfully",
-      product,
-    });
+    return res
+      .status(200)
+      .json(new ApiResponse("product is fetched successfully", product));
   },
 );
 
@@ -166,10 +168,9 @@ export const updateProduct: RequestHandler = asyncHandler(
 
     await product.save();
 
-    return res.status(200).json({
-      message: "product updated successfully",
-      product,
-    });
+    return res
+      .status(200)
+      .json(new ApiResponse("product updated successfully", product));
   },
 );
 
@@ -209,8 +210,8 @@ export const deleteProduct: RequestHandler = asyncHandler(
 
     await productModel.findByIdAndDelete(id);
 
-    return res.status(200).json({
-      message: "product deleted successfully",
-    });
+    return res
+      .status(200)
+      .json(new ApiResponse("product deleted successfully"));
   },
 );

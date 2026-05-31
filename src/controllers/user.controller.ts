@@ -3,6 +3,7 @@ import userModel from "../models/user.model.js";
 import { generateToken } from "../utils/generateToken.js";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import ApiResponse from "../utils/apiResponse.js";
 
 /**
  @route       POST /api/auth/register
@@ -34,9 +35,7 @@ export const registerUser: RequestHandler = asyncHandler(
       sameSite: "strict",
     });
 
-    return res.status(201).json({
-      message: "user created successfully",
-    });
+    return res.status(201).json(new ApiResponse("user created successfully"));
   },
 );
 
@@ -73,8 +72,6 @@ export const loginUser: RequestHandler = asyncHandler(
       sameSite: "strict",
     });
 
-    return res.status(200).json({
-      message: "Login successfully",
-    });
+    return res.status(200).json(new ApiResponse("Login successfully"));
   },
 );
