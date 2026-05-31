@@ -112,27 +112,26 @@ export const getAllProducts: RequestHandler = asyncHandler(
  @returns     {Response} 404 - Error response when product is not found
  @returns     {Response} 500 - Internal server error handling unforeseen database, runtime issues
  */
-export const getProductById: RequestHandler = async (
-  req: Request,
-  res: Response,
-) => {
-  const { id } = req.params as { id: string };
+export const getProductById: RequestHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params as { id: string };
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "invalid product ID");
-  }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new ApiError(400, "invalid product ID");
+    }
 
-  const product = await productModel.findById(id);
+    const product = await productModel.findById(id);
 
-  if (!product) {
-    throw new ApiError(404, "No product with this ID");
-  }
+    if (!product) {
+      throw new ApiError(404, "No product with this ID");
+    }
 
-  return res.status(200).json({
-    message: "product is fetched successfully",
-    product,
-  });
-};
+    return res.status(200).json({
+      message: "product is fetched successfully",
+      product,
+    });
+  },
+);
 
 /**
  @route       PATCH /api/products/:id
@@ -146,34 +145,33 @@ export const getProductById: RequestHandler = async (
  @returns     {Response} 404 - Error response when product is not found
  @returns     {Response} 500 - Internal server error handling unforeseen database, runtime issues
  */
-export const updateProduct: RequestHandler = async (
-  req: Request,
-  res: Response,
-) => {
-  const { id } = req.params as { id: string };
-  const { name, description, price, category } = req.body;
+export const updateProduct: RequestHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params as { id: string };
+    const { name, description, price, category } = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "invalid product ID");
-  }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new ApiError(400, "invalid product ID");
+    }
 
-  const product = await productModel.findById(id);
-  if (!product) {
-    throw new ApiError(404, "product not found");
-  }
+    const product = await productModel.findById(id);
+    if (!product) {
+      throw new ApiError(404, "product not found");
+    }
 
-  if (name !== undefined) product.name = name;
-  if (description !== undefined) product.description = description;
-  if (price !== undefined) product.price = Number(price);
-  if (category !== undefined) product.category = category;
+    if (name !== undefined) product.name = name;
+    if (description !== undefined) product.description = description;
+    if (price !== undefined) product.price = Number(price);
+    if (category !== undefined) product.category = category;
 
-  await product.save();
+    await product.save();
 
-  return res.status(200).json({
-    message: "product updated successfully",
-    product,
-  });
-};
+    return res.status(200).json({
+      message: "product updated successfully",
+      product,
+    });
+  },
+);
 
 /**
  @route       DELETE /api/products/:id
