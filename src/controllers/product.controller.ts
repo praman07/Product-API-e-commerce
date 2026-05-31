@@ -7,6 +7,10 @@ import mongoose from "mongoose";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
+import {
+  deleteFromImageKit,
+  uploadImageToImageKit,
+} from "../utils/uploadToImageKit.js";
 
 /**
  @route       POST /api/products
@@ -28,39 +32,29 @@ export const createProduct: RequestHandler = asyncHandler(
       throw new ApiError(400, "No image provided");
     }
 
-    const imgUploads = files.map(async (file) =>
-      imageKitClient.files.upload({
-        file: await toFile(file.buffer, file.originalname),
-        fileName: file.originalname,
-        useUniqueFileName: true,
-      }),
-    );
-
-    const results = await Promise.allSettled(imgUploads);
-
-    const uploaded = results
-      .filter((r) => r.status === "fulfilled")
-      .map((r) => (r as PromiseFulfilledResult<any>).value)
-      .map((r) => ({
-        url: r.url,
-        name: r.name,
-        fileId: r.fileId,
-        originalName: r.originalname,
-      }));
-
-    const failedCount = results.filter((r) => r.status === "rejected").length;
+    const { uploaded, failedCount } = await uploadImageToImageKit(files);
 
     if (uploaded.length === 0) {
-      return res.status(500).json(new ApiResponse("all images upload failed"));
+      throw new ApiError(500, "all image uploads failed");
     }
 
-    const product = await productModel.create({
-      name,
-      description,
-      price: Number(price),
-      category,
-      images: uploaded,
-    });
+    // ImageKit cleanup if database fails to save the prouct and image urls
+
+    let product;
+    try {
+      product = await productModel.create({
+        name,
+        description,
+        price: Number(price),
+        category,
+        images: uploaded,
+      });
+    } catch (dbError) {
+      // Rollback: delete uploaded images from imagekit
+      await deleteFromImageKit(uploaded.map((img) => img.fileId));
+
+      throw new ApiError(500, "Product creation failed, image rolled back");
+    }
 
     return res
       .status(201)
@@ -202,10 +196,7 @@ export const deleteProduct: RequestHandler = asyncHandler(
 
     // Delete all images from ImageKit
     if (product.images && product.images.length > 0) {
-      const deleteImg = (product.images as Iimage[]).map((img) =>
-        imageKitClient.files.delete(img.fileId),
-      );
-      await Promise.allSettled(deleteImg);
+      await deleteFromImageKit(product.images.map((img) => img.fileId));
     }
 
     await productModel.findByIdAndDelete(id);

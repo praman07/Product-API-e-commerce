@@ -4,6 +4,8 @@ import { generateToken } from "../utils/generateToken.js";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
+import { setAccessTokenCookie } from "../utils/setCookie.js";
+import type { AuthentcatedRequest } from "../type/index.js";
 
 /**
  @route       POST /api/auth/register
@@ -29,11 +31,7 @@ export const registerUser: RequestHandler = asyncHandler(
 
     const accessToken = generateToken(newUser);
 
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-    });
+    setAccessTokenCookie(res, accessToken);
 
     return res.status(201).json(new ApiResponse("user created successfully"));
   },
@@ -66,12 +64,26 @@ export const loginUser: RequestHandler = asyncHandler(
 
     const accessToken = generateToken(user);
 
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-    });
+    setAccessTokenCookie(res, accessToken);
 
     return res.status(200).json(new ApiResponse("Login successfully"));
+  },
+);
+
+/**
+ @route       POST /api/auth/logout
+ @desc        clears the cookie and logs out the user
+ @access      Private
+ @param       {Request} req - Express request object 
+ @param       {Response} res - Express response object
+ @param       {NextFunction} next - Express next funciton for error handling
+ @returns     {Response} 200 - Success response confirming user log out
+ @returns     {Response} 500 - Internal server error handling log in
+ */
+export const logout: RequestHandler = asyncHandler(
+  async (req: AuthentcatedRequest, res: Response) => {
+    res.clearCookie("accessToken");
+
+    return res.status(200).json(new ApiResponse("logout successfully"));
   },
 );
