@@ -20,10 +20,10 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 
 // object.freeze() prevents accidental runtime modification of config values
 const config = Object.freeze({
-  MONGODB_URI: process.env.MONGODB_URI,
-  JWT_SECRET: process.env.JWT_SECRET,
+  MONGODB_URI: process.env.MONGODB_URI as string,
+  JWT_SECRET: process.env.JWT_SECRET as string,
   PORT: port,
-  IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
+  IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY as string,
 });
 
 export default config;
