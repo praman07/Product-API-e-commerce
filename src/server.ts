@@ -1,22 +1,14 @@
 import app from "./app.js";
 import config from "./config/config.js";
 import connectDB from "./config/database.js";
-import errorMiddleware from "./middlewares/error.middleware.js";
-import productRouter from "./routes/product.route.js";
-import userRouter from "./routes/user.route.js";
 
-connectDB();
+// Bootstrap: connect to DB then start HTTP server
+const startServer = async () => {
+  await connectDB();
 
-app.get("/", (_req, res) => {
-  res.send("Server running perfectly");
-});
+  app.listen(config.PORT, () => {
+    console.log(`Server running on port: ${config.PORT}`);
+  });
+};
 
-app.use("/api/auth", userRouter);
-
-app.use("/api/products", productRouter);
-
-app.use(errorMiddleware);
-
-app.listen(config.PORT, () => {
-  console.log(`Server running on port: ${config.PORT}`);
-});
+startServer();
