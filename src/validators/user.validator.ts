@@ -19,8 +19,9 @@ export const userRegisterInputRules = [
   body("password")
     .notEmpty()
     .withMessage("password is required")
-    .isLength({ min: 4 })
-    .withMessage("password must contain atleast 4 characters"),
+    // REVIEW FIX: 4 chars is too weak. Raised minimum to 6 characters.
+    .isLength({ min: 6 })
+    .withMessage("password must contain at least 6 characters"),
 ];
 
 export const userLoginInputRules = [
