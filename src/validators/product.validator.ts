@@ -6,8 +6,9 @@ export const productFieldRules = [
     .trim()
     .notEmpty()
     .withMessage("name is required")
-    .isLength({ max: 25 })
-    .withMessage("name must be under 25 characters"),
+    // REVIEW FIX: 25 chars is too short for real product names. Raised to 100.
+    .isLength({ max: 100 })
+    .withMessage("name must be under 100 characters"),
 
   body("description")
     .trim()
@@ -37,14 +38,15 @@ export const productUpdateRules = [
     .trim()
     .notEmpty()
     .withMessage("name cannot be an empty string")
-    .isLength({ max: 25 })
-    .withMessage("name must be under 25 characters"),
+    .isLength({ max: 100 })
+    .withMessage("name must be under 100 characters"),
 
   body("description")
     .optional()
     .trim()
     .notEmpty()
-    .withMessage("descritpion cannot be an empty string")
+    // REVIEW FIX: Fixed typo 'descritpion' -> 'description' in error message
+    .withMessage("description cannot be an empty string")
     .isLength({ max: 100 })
     .withMessage("description must be under 100 characters"),
 
