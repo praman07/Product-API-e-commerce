@@ -1,11 +1,11 @@
 import type { NextFunction, Response } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import config from "../config/config.js";
-import type { AuthentcatedRequest } from "../type/index.js";
+import type { AuthenticatedRequest } from "../type/index.js";
 import ApiError from "../utils/apiError.js";
 
 export const requireAuth = (
-  req: AuthentcatedRequest,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ) => {

@@ -5,7 +5,7 @@ import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
 import { setAccessTokenCookie } from "../utils/setCookie.js";
-import type { AuthentcatedRequest } from "../type/index.js";
+import type { AuthenticatedRequest } from "../type/index.js";
 
 /**
  @route       POST /api/auth/register
@@ -81,7 +81,7 @@ export const loginUser: RequestHandler = asyncHandler(
  @returns     {Response} 500 - Internal server error handling log in
  */
 export const logout: RequestHandler = asyncHandler(
-  async (req: AuthentcatedRequest, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     res.clearCookie("accessToken");
 
     return res.status(200).json(new ApiResponse("logout successfully"));

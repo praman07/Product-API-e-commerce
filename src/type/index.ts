@@ -1,6 +1,7 @@
 import type { Request } from "express";
 
-export interface AuthentcatedRequest extends Request {
+// REVIEW FIX: Renamed typo AuthentcatedRequest → AuthenticatedRequest
+export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
   };
