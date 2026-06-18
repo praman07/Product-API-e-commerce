@@ -1,6 +1,4 @@
 import type { NextFunction, Request, RequestHandler, Response } from "express";
-import imageKitClient from "../config/imageKit.js";
-import { toFile } from "@imagekit/nodejs";
 import productModel from "../models/product.model.js";
 import type { Iimage } from "../models/product.model.js";
 import mongoose from "mongoose";
