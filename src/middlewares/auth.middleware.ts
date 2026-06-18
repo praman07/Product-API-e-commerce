@@ -11,8 +11,10 @@ export const requireAuth = (
 ) => {
   const token = req.cookies?.accessToken;
 
+  // REVIEW FIX: Use next() instead of throw so the global error middleware handles it.
+  // Throwing directly in a non-async middleware skips errorMiddleware entirely.
   if (!token) {
-    throw new ApiError(401, "unauthorized user: no token provided");
+    return next(new ApiError(401, "unauthorized user: no token provided"));
   }
 
   try {
@@ -24,6 +26,6 @@ export const requireAuth = (
 
     next();
   } catch (error) {
-    next(error);
+    next(new ApiError(401, "unauthorized user: invalid or expired token"));
   }
 };
