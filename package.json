@@ -1,14 +1,17 @@
 {
   "name": "product-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "A production-ready E-Commerce Product Management REST API built with Node.js, Express, TypeScript and MongoDB",
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "tsc:check": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["ecommerce", "api", "nodejs", "express", "typescript", "mongodb"],
+  "author": "praman07",
   "license": "ISC",
   "packageManager": "pnpm@10.33.2",
   "devDependencies": {
