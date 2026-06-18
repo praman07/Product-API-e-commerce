@@ -1,2 +1,24 @@
+
+# Dependencies
 node_modules/
+
+# Environment secrets
 .env
+.env.local
+
+# TypeScript build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
